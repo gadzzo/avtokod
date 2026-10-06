@@ -7,6 +7,16 @@
 <div class="result-panel hidden-result" id="spinResult"><div class="result-main"><div><div class="result-label">ВЫПАЛО</div><b id="carName"></b><span id="price"></span></div><div class="result-rarity" id="rarity"></div></div><div class="result-actions"><button id="keep" class="green">🚘 В ГАРАЖ</button><button id="sell" class="dark">💰 ПРОДАТЬ</button></div></div>
 <div class="hint" id="hint">Нажми «КРУТИТЬ» — рулетка остановится на случайной машине.</div><button class="open" id="spinBtn">🎰 КРУТИТЬ <span>150 000 ₽</span></button>
 <button class="skip-spin" id="skipSpin" disabled>⏩ ПРОПУСТИТЬ ПРОКРУТКУ</button>
+<section class="today-panel" id="todayPanel">
+<div class="today-head"><div><span class="today-kicker">СЕГОДНЯ</span><h2>🔥 Игровой день</h2><small>Все важные активности собраны здесь.</small></div><div class="today-badge">DAILY</div></div>
+<div class="today-grid">
+<div class="today-card today-tasks"><div class="today-card-top"><b>🎯 3 задания</b><span id="todayTasksCount">0/3</span></div><div id="todayTasks"></div><button class="today-btn" data-go="activities">ВСЕ ЗАДАНИЯ</button></div>
+<div class="today-card"><div class="today-card-top"><b>🎁 Ежедневная награда</b><span id="todayBonusState">ГОТОВА</span></div><strong id="todayBonusPreview">+250 000 ₽</strong><button id="todayClaim" class="today-btn accent">ЗАБРАТЬ БОНУС</button></div>
+<div class="today-card"><div class="today-card-top"><b>🚗 Машина дня</b><span>−15%</span></div><div id="todayCar"></div><button class="today-btn" data-go="market">ОТКРЫТЬ РЫНОК</button></div>
+<div class="today-card"><div class="today-card-top"><b>⚡ Событие</b><span>+10%</span></div><div id="todayEvent"></div></div>
+<div class="today-card"><div class="today-card-top"><b>🎡 Колесо</b><span>1 раз/день</span></div><strong id="todayWheelResult">Испытай удачу</strong><button id="todayWheel" class="today-btn">КРУТИТЬ</button></div>
+<div class="today-card"><div class="today-card-top"><b>🏆 Сезон</b><span id="todaySeasonLevel">Уровень 1</span></div><div id="todaySeason"></div><button class="today-btn" data-go="activities">ОТКРЫТЬ СЕЗОН</button></div>
+</div></section>
 <div class="spin-mode-label">ТИП ПРОКРУТКИ: <b id="spinModeLabel">ОБЫЧНАЯ ПРОКРУТКА</b></div>
 <div class="spin-modes">
 <button class="spin-mode mode-ordinary selected" data-mode="ordinary"><span>⚪ ОБЫЧНАЯ</span><small>только обычные</small><b>2 000 000 ₽</b></button>
@@ -54,4 +64,4 @@
 <div class="activity-card profile-card"><b>🔥 Событие и машина дня</b><div id="eventBox"></div></div>
 </main>
 
-</div><script src="app-v13.js"></script></body></html>
+</div><script src="app-v14.js"></script></body></html>
