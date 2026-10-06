@@ -616,3 +616,33 @@ migrate16();addDepthPanel16();renderAll();
   // Upgrade / achievement / reward celebration.
   document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const t=(b.textContent||'').toLowerCase();if(/улучш|достиж|награ|престиж|jackpot|джекпот/.test(t)){const r=b.getBoundingClientRect();burst(35,'confetti',{x:r.left+r.width/2,y:r.top+r.height/2});flash()}});
 })();
+
+/* ===== v20 APEX GAME SYSTEM ===== */
+(function APEX20(){
+  const K='ak_apex_v20';
+  let A=JSON.parse(localStorage.getItem(K)||'{"rep":0,"bestCombo":0,"jackpot":250000000,"contracts":{},"claimed":[]}');
+  const saveA=()=>localStorage.setItem(K,JSON.stringify(A));
+  const toast=(t)=>{const e=document.getElementById('apexToast20');if(!e)return;e.textContent=t;e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),2200)};
+  const go=(tab)=>{const b=document.querySelector(`.tabs button[data-tab="${tab}"]`);if(b)b.click();else{document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active-panel'));document.getElementById(tab)?.classList.add('active-panel')}};
+  document.querySelectorAll('[data-command]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.command)));
+  const rank=(r)=>r<50?'СТАЖЁР':r<150?'УЧЕНИК':r<350?'ПИЛОТ':r<700?'ПРОФИ':r<1200?'ЭКСПЕРТ':r<2000?'МАСТЕР':'ICON';
+  const refresh=()=>{
+    const garageValue=garage.reduce((s,c)=>s+(c.price||0),0), empire=garageValue+bank;
+    const rep=Math.max(0,A.rep), pct=Math.min(100,(collection.length/cars.length)*100);
+    $('#rep20').textContent=rep.toLocaleString('ru-RU');$('#rank20').textContent=rank(rep);$('#repBar20').style.width=Math.min(100,(rep%2000)/20)+'%';
+    $('#combo20').textContent=(stats.combo||0)+'×';$('#bestCombo20').textContent=(A.bestCombo||0)+'×';$('#jackpot20').textContent=fmt(A.jackpot);$('#empire20').textContent=fmt(empire);$('#progress20').textContent=Math.round(pct)+'%';$('#progressBar20').style.width=pct+'%';
+    const box=$('#contracts20'); if(!box)return;
+    const contracts=[
+      ['🎰','Сделать 3 прокрутки','spins',3,2500000],['💎','Открыть 2 новые машины','newcars',2,5000000],['💰','Заработать 10М','earned',10000000,3500000]
+    ];
+    box.innerHTML=contracts.map((c,i)=>{let v=A.contracts[c[2]]||0, p=Math.min(100,v/c[3]*100);return `<div class="contract20"><div class="contract-icon20">${c[0]}</div><div style="flex:1"><b>${c[1]}</b><small>${typeof c[3]==='number'&&c[3]>100?fmt(v)+' / '+fmt(c[3]):v+' / '+c[3]}</small><div class="contract-progress20"><i style="width:${p}%"></i></div></div><strong>+${fmt(c[4]).replace(' ₽','')} ₽</strong></div>`}).join('');
+  };
+  const oldRenderAll=window.renderAll;
+  window.renderAll=function(){oldRenderAll();refresh()};
+  const oldSpin=window.spin;
+  if(oldSpin){window.spin=function(){oldSpin();A.rep+=4;A.jackpot+=150000;A.contracts.spins=(A.contracts.spins||0)+1;A.contracts.earned=(A.contracts.earned||0);A.bestCombo=Math.max(A.bestCombo,stats.combo||0);saveA();refresh()}};
+  const oldKeep=window.keepSelected;
+  if(oldKeep)window.keepSelected=function(){const before=collection.length;oldKeep();if(collection.length>before){A.rep+=12;A.contracts.newcars=(A.contracts.newcars||0)+1;A.bestCombo=Math.max(A.bestCombo,stats.combo||0);saveA();refresh();toast('✦ НОВАЯ МАШИНА • +12 REP')}};
+  document.addEventListener('click',e=>{const card=e.target.closest('.car-card');if(card&&!e.target.closest('button')){card.animate([{transform:'perspective(700px) rotateX(0)'},{transform:'perspective(700px) rotateX(-4deg) scale(1.025)'},{transform:'perspective(700px) rotateX(0)'}],{duration:420,easing:'cubic-bezier(.2,.8,.2,1)'});}});
+  refresh();
+})();
