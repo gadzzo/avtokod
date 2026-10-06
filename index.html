@@ -1,56 +1,14 @@
-<!doctype html>
-<html lang="ru">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Автокод</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<div class="app">
-  <header>
-    <div>
-      <div class="brand">АВТО<span>КОД</span></div>
-      <div class="sub">коллекционируй автомобили</div>
-    </div>
-    <div class="money">₽ <b id="balance">2 500 000</b></div>
-  </header>
-
-  <div class="stats">
-    <div>🚘 <b id="cars">0</b><small>авто</small></div>
-    <div>⭐ <b id="level">1</b><small>уровень</small></div>
-    <div>🔥 <b id="streak">0</b><small>серия</small></div>
-  </div>
-
-  <div class="tabs">
-    <button class="active">Гараж</button>
-    <button>Коллекция</button>
-    <button>Рынок</button>
-  </div>
-
-  <section class="showcase">
-    <div class="rarity" id="rarity">ЭПИЧЕСКИЙ</div>
-    <div class="car-art" id="carArt">🚘</div>
-    <div class="car-name" id="carName">BMW M4 Competition</div>
-    <div class="specs">
-      <span id="power">510 л.с.</span>
-      <span id="year">2024</span>
-      <span id="chance">Шанс 4,0%</span>
-    </div>
-    <div class="price" id="price">3 900 000 ₽</div>
-  </section>
-
-  <div class="hint" id="hint">Открой автомобиль и попробуй выбить редкость выше.</div>
-
-  <button class="open" id="open">🎲 ОТКРЫТЬ АВТО <span>150 000 ₽</span></button>
-  <button class="free" id="free">🎁 Ежедневное открытие</button>
-
-  <div class="collection-title">
-    <b>Последние находки</b><span id="count">0 / 50</span>
-  </div>
-  <div class="mini-grid" id="grid"></div>
-</div>
-<script src="app.js"></script>
-</body>
-</html>
+<!doctype html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>АВТОКОД</title><script src="https://telegram.org/js/telegram-web-app.js"></script><link rel="stylesheet" href="style.css"></head><body><div class="app">
+<header><div><div class="brand">АВТО<span>КОД</span></div><div class="sub">коллекционируй автомобили</div></div><div class="money">₽ <b id="balance">2 500 000</b></div></header>
+<div class="stats"><div>🚘 <b id="cars">0</b><small>в гараже</small></div><div>⭐ <b id="level">1</b><small>уровень</small></div><div>🔥 <b id="streak">0</b><small>серия</small></div></div>
+<div class="tabs"><button class="active" data-tab="spin">Крутить</button><button data-tab="garage">Гараж</button><button data-tab="collection">Коллекция</button><button data-tab="market">Рынок</button></div>
+<main id="spin" class="panel active-panel">
+<div class="roulette-wrap"><div class="pointer">▼</div><div class="roulette-viewport"><div id="rouletteTrack" class="roulette-track"></div></div></div>
+<div class="spin-result" id="spinResult"><div class="rarity" id="rarity">ЭПИЧЕСКИЙ</div><div class="car-art" id="carArt">🏎️</div><div class="car-name" id="carName">BMW M5 CS</div><div class="specs"><span id="power">635 л.с.</span><span id="year">2022</span><span id="chance">Шанс 1%</span></div><div class="price" id="price">17 000 000 ₽</div><div class="result-actions"><button id="keep" class="green">🚘 В ГАРАЖ</button><button id="sell" class="dark">💰 ПРОДАТЬ</button></div></div>
+<div class="hint" id="hint">Нажми «КРУТИТЬ» — рулетка остановится на случайной машине.</div><button class="open" id="spinBtn">🎰 КРУТИТЬ <span>150 000 ₽</span></button><button class="free" id="free">🎁 Ежедневное открытие</button>
+<div class="achievements"><b>Достижения</b><div id="achList"></div></div>
+</main>
+<main id="garage" class="panel"><div class="section-head"><b>Мой гараж</b><span id="garageValue">0 ₽</span></div><div class="toolbar"><input id="garageSearch" placeholder="Поиск марки или модели"><select id="garageRarity"><option value="">Все редкости</option><option>ОБЫЧНЫЙ</option><option>РЕДКИЙ</option><option>ЭПИЧЕСКИЙ</option><option>ЛЕГЕНДАРНЫЙ</option><option>МИФИЧЕСКИЙ</option></select></div><div id="garageGrid" class="car-grid"></div></main>
+<main id="collection" class="panel"><div class="section-head"><b>Коллекция</b><span id="collectionCount">0 / 100</span></div><div class="toolbar"><input id="collectionSearch" placeholder="Поиск марки или модели"><select id="collectionRarity"><option value="">Все редкости</option><option>ОБЫЧНЫЙ</option><option>РЕДКИЙ</option><option>ЭПИЧЕСКИЙ</option><option>ЛЕГЕНДАРНЫЙ</option><option>МИФИЧЕСКИЙ</option></select><select id="collectionSort"><option value="rarity">Редкость</option><option value="price">Цена</option><option value="name">Название</option></select></div><div id="collectionGrid" class="car-grid"></div></main>
+<main id="market" class="panel"><div class="section-head"><b>Рынок</b><span>покупка → сразу в гараж</span></div><div class="toolbar"><input id="marketSearch" placeholder="Поиск марки или модели"><select id="marketRarity"><option value="">Все редкости</option><option>ОБЫЧНЫЙ</option><option>РЕДКИЙ</option><option>ЭПИЧЕСКИЙ</option><option>ЛЕГЕНДАРНЫЙ</option><option>МИФИЧЕСКИЙ</option></select></div><div id="marketGrid" class="car-grid"></div></main>
+</div><script src="app.js"></script></body></html>
