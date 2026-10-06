@@ -521,3 +521,33 @@ function addDepthPanel16(){
 function renderDepth16(){const cap=document.getElementById('garageCap16');if(cap)cap.textContent=`${garage.length} / ${garageCap}`;const lv=document.getElementById('bizLv16');if(lv)lv.textContent=`Lv.${business16.level}`;const inc=document.getElementById('bizIncome16');if(inc){const h=business16.last?Math.min(24,(Date.now()-business16.last)/3600000):0;inc.textContent=fmt(Math.floor(h*(business16.level+1)*125000))+' ₽'}const up=document.getElementById('garageUp16');if(up)up.textContent=`+10 мест · ${fmt(garageCap<30?5000000:garageCap<40?15000000:30000000)}`;const bu=document.getElementById('bizUp16');if(bu)bu.textContent=`УЛУЧШИТЬ · ${fmt((business16.level+1)*10000000)}`}
 const prevRenderAll16=renderAll;renderAll=function(){prevRenderAll16();renderDepth16();};
 migrate16();addDepthPanel16();renderAll();
+
+/* ===== v17 — MOTION CONTROLLER ===== */
+(function motion17(){
+  const stagger=(selector,container)=>{const root=container||document;root.querySelectorAll(selector).forEach((el,i)=>el.style.setProperty('--i',Math.min(i,12)));};
+  const refreshMotion=()=>{
+    stagger('.car-grid .car-card'); stagger('.ak-specs16>div'); stagger('.ak-meta16 span');
+  };
+  const oldRenderAll17=renderAll;
+  renderAll=function(){oldRenderAll17();requestAnimationFrame(refreshMotion)};
+  document.addEventListener('click',e=>{
+    const b=e.target.closest('button'); if(!b||b.disabled)return;
+    if(navigator.vibrate) navigator.vibrate(8);
+    if(b.classList.contains('open')||b.id==='spinBtn'){
+      b.style.setProperty('--press','1'); setTimeout(()=>b.style.removeProperty('--press'),180);
+    }
+  });
+  document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>{
+    const tab=b.dataset.tab; const panel=document.getElementById(tab);
+    if(panel) panel.animate([{opacity:.55,transform:'translateY(8px)'},{opacity:1,transform:'translateY(0)'}],{duration:280,easing:'cubic-bezier(.2,.8,.2,1)'});
+  }));
+  const oldSpin=spin;
+  spin=function(){
+    const btn=document.getElementById('spinBtn');
+    if(btn){btn.animate([{transform:'scale(1)'},{transform:'scale(.97)'},{transform:'scale(1.02)'},{transform:'scale(1)'}],{duration:360,easing:'ease-out'});}
+    oldSpin();
+  };
+  const oldFinish=finishSpin;
+  finishSpin=function(){oldFinish();setTimeout(()=>{const w=document.querySelector('.roulette-card.reel-winner');if(w)w.animate([{transform:'scale(1)'},{transform:'scale(1.1)'},{transform:'scale(1)'}],{duration:650,easing:'cubic-bezier(.2,.9,.2,1)'});},30)};
+  refreshMotion();
+})();

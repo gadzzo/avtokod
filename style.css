@@ -39,3 +39,71 @@ header{position:sticky;top:0;z-index:20;background:rgba(8,10,15,.86);backdrop-fi
 .ak-condition16{margin:16px 0}.ak-condition16>span{color:var(--muted)}.ak-condition16>b{float:right}.ak-condition16>i{display:block;height:8px;background:#242a35;border-radius:99px;margin-top:8px;overflow:hidden}.ak-condition16 em{display:block;height:100%;background:linear-gradient(90deg,#d85c52,#f5b94b,#59c985);border-radius:inherit}.ak-meta16{display:flex;flex-wrap:wrap;gap:7px}.ak-meta16 span{background:var(--glass);border:1px solid var(--line);border-radius:10px;padding:7px 9px;font-size:12px}.ak-history16{color:var(--muted);line-height:1.5}
 .depth16{grid-column:1/-1}.depth-grid16{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.depth-grid16>div{background:var(--glass);border:1px solid var(--line);border-radius:14px;padding:12px}.depth-grid16 span,.depth-grid16 small{display:block;color:var(--muted);font-size:12px}.depth-grid16 strong{display:block;font-size:18px;margin:5px 0}.depth-grid16 button{width:100%;border:0;border-radius:9px;padding:8px;background:#202632;color:#fff;font-weight:800;font-size:11px}
 @media(max-width:520px){.ak-specs16{grid-template-columns:repeat(2,1fr)}.depth-grid16{grid-template-columns:1fr}.tabs{top:61px}.car-card .emoji{font-size:44px}}
+
+/* ===== v17 — MOTION PACK ===== */
+@keyframes akFadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes akPop{0%{opacity:0;transform:scale(.92)}70%{transform:scale(1.025)}100%{opacity:1;transform:scale(1)}}
+@keyframes akGlow{0%,100%{box-shadow:0 0 0 rgba(49,232,109,0)}50%{box-shadow:0 0 28px rgba(49,232,109,.28)}}
+@keyframes akShine{from{transform:translateX(-130%)}to{transform:translateX(130%)}}
+@keyframes akFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes akSpinIcon{to{transform:rotate(360deg)}}
+@keyframes akWinner{0%{transform:scale(1)}45%{transform:scale(1.07)}100%{transform:scale(1)}}
+@keyframes akModalIn{from{opacity:0;transform:translateY(35px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes akFlash{0%{filter:brightness(1)}35%{filter:brightness(1.8)}100%{filter:brightness(1)}}
+
+/* buttons feel alive */
+button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .16s ease,filter .16s ease,box-shadow .16s ease,background .16s ease}
+button:active:not(:disabled){transform:scale(.96);filter:brightness(.94)}
+.open{position:relative;overflow:hidden;animation:akGlow 2.8s ease-in-out infinite}
+.open:before{content:"";position:absolute;inset:0;width:35%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transform:translateX(-130%);animation:akShine 3.8s ease-in-out infinite;pointer-events:none}
+.spin-mode{transition:transform .18s ease,box-shadow .22s ease,border-color .22s ease}
+.spin-mode:hover{transform:translateY(-2px)}
+.skip-spin:hover,.free:hover,.today-btn:hover,.case-grid button:hover,.upgrade-grid button:hover,.quick-grid button:hover{transform:translateY(-2px)}
+
+/* page sections enter smoothly */
+.active-panel{animation:akFadeUp .28s ease both}
+.today-panel,.quick-center,.activity-card,.achievements,.event-box,.auction,.profile-mini-grid,.car-grid,.case-grid,.upgrade-grid{animation:akFadeUp .34s ease both}
+.car-grid .car-card{animation:akFadeUp .32s ease both;animation-delay:calc(var(--i,0) * 35ms)}
+.car-card{transition:transform .2s cubic-bezier(.2,.8,.2,1),box-shadow .22s ease,border-color .22s ease}
+.car-card:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(120deg,transparent 20%,rgba(255,255,255,.045) 45%,transparent 70%);transform:translateX(-120%);transition:none}
+.car-card:hover:before{animation:akShine .8s ease}
+.car-card:hover{transform:translateY(-4px) scale(1.01)}
+.car-card .emoji{animation:akFloat 4s ease-in-out infinite}
+.car-card:active .emoji{animation:none;transform:scale(.9)}
+
+/* roulette */
+.roulette-viewport{position:relative}
+.roulette-viewport:after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:linear-gradient(90deg,rgba(8,10,14,.9),transparent 12%,transparent 88%,rgba(8,10,14,.9));z-index:2}
+.pointer{animation:akFloat 1.2s ease-in-out infinite;filter:drop-shadow(0 0 8px #39ea72)}
+.roulette-card{transition:transform .2s ease,filter .2s ease,box-shadow .2s ease}
+.roulette-card.reel-winner{animation:akWinner .8s ease,akGlow 1.2s ease 2}
+.spin-modes + .roulette-wrap{animation:akFadeUp .35s ease both}
+
+/* result reveal */
+.result-panel:not(.hidden-result){animation:akPop .42s cubic-bezier(.2,.9,.2,1) both,akFlash .7s ease .15s both}
+.result-panel:not(.hidden-result) .result-actions button{animation:akFadeUp .3s ease both}
+.result-panel:not(.hidden-result) .result-actions button:nth-child(2){animation-delay:.07s}
+
+/* tabs */
+.tabs button{position:relative;overflow:hidden}
+.tabs button:after{content:"";position:absolute;left:15%;right:15%;bottom:3px;height:2px;border-radius:4px;background:#31e86d;transform:scaleX(0);transition:transform .22s ease}
+.tabs button.active:after{transform:scaleX(1)}
+
+/* modal */
+.ak-modal16.show .ak-modal-card16{animation:akModalIn .32s cubic-bezier(.2,.85,.2,1) both}
+.ak-modal16.show .ak-rating16{animation:akPop .35s ease .08s both}
+.ak-modal16.show .ak-specs16>div{animation:akFadeUp .3s ease both;animation-delay:calc(var(--i,0) * 45ms)}
+.ak-modal16.show .ak-meta16 span{animation:akPop .25s ease both}
+
+/* garage/business feedback */
+.depth16{transition:transform .2s ease,box-shadow .2s ease}
+.depth16:hover{transform:translateY(-2px);box-shadow:0 14px 35px rgba(0,0,0,.2)}
+.depth-grid16>div{transition:transform .18s ease,border-color .18s ease,background .18s ease}
+.depth-grid16>div:hover{transform:translateY(-3px);border-color:rgba(245,185,75,.35);background:rgba(255,255,255,.07)}
+.ak-toast16.show{animation:akPop .28s ease both}
+
+/* badges / rarity celebration */
+.rare,.epic,.legendary,.mythic,.exclusive{transition:box-shadow .25s ease,transform .2s ease}
+.legendary,.mythic,.exclusive{animation:akGlow 3s ease-in-out infinite}
+
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
