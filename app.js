@@ -104,7 +104,7 @@ let garage=JSON.parse(localStorage.getItem(KEY.garage)||"[]");
 let collection=JSON.parse(localStorage.getItem(KEY.collection)||"[]");
 let streak=Number(localStorage.getItem(KEY.streak)||0);
 let favs=JSON.parse(localStorage.getItem(KEY.favs)||"[]");
-let selected=null, spinning=false;
+let selected=null, spinning=false, resultActionDone=false;
 const $=s=>document.querySelector(s), fmt=n=>Math.round(n).toLocaleString("ru-RU")+" ₽";
 const clsFor=c=>({"ОБЫЧНЫЙ":"","РЕДКИЙ":"rare","ЭПИЧЕСКИЙ":"epic","ЛЕГЕНДАРНЫЙ":"legendary","МИФИЧЕСКИЙ":"mythic"}[c.rarity]||"");
 const idFor=c=>c.name;
@@ -114,11 +114,19 @@ function renderTop(){
   $("#level").textContent=Math.max(1,Math.floor(collection.length/5)+1);$("#collectionCount").textContent=collection.length+" / "+cars.length;
   $("#garageValue").textContent=fmt(garage.reduce((s,c)=>s+c.price,0));
 }
-function renderResult(c){selected=c;$("#rarity").textContent=c.rarity;$("#rarity").className="rarity "+clsFor(c);$("#carArt").textContent=c.emoji;$("#carName").textContent=c.name;$("#power").textContent=c.power+" л.с.";$("#year").textContent=c.year;$("#chance").textContent="Шанс "+c.chance;$("#price").textContent=fmt(c.price);$("#spinResult").classList.add(clsFor(c));setTimeout(()=>$("#spinResult").classList.remove(clsFor(c)),900)}
+function setResultActions(enabled){
+  [$("#keep"),$("#sell")].forEach(b=>{b.disabled=!enabled;b.style.opacity=enabled?"1":".45";b.style.pointerEvents=enabled?"auto":"none"});
+  $("#spinResult").classList.toggle("hidden-result", !enabled);
+}
+function renderResult(c){
+  selected=c; resultActionDone=false; setResultActions(true);
+  $("#rarity").textContent=c.rarity;$("#rarity").className="rarity "+clsFor(c);$("#carArt").textContent=c.emoji;$("#carName").textContent=c.name;$("#power").textContent=c.power+" л.с.";$("#year").textContent=c.year;$("#chance").textContent="Шанс "+c.chance;$("#price").textContent=fmt(c.price);
+  const effect=clsFor(c); if(effect){$("#spinResult").classList.add(effect);setTimeout(()=>$("#spinResult").classList.remove(effect),900)}
+}
 function weightedDraw(){let weights=cars.map(c=>Math.max(.001,parseFloat(c.chance)));let total=weights.reduce((a,b)=>a+b,0),r=Math.random()*total;for(let i=0;i<cars.length;i++){r-=weights[i];if(r<=0)return cars[i]}return cars[0]}
 function card(c,mode){const d=document.createElement("div");d.className="car-card "+clsFor(c);const fav=favs.includes(idFor(c));d.innerHTML=`<button class="fav ${fav?"on":""}">★</button><div class="emoji">${c.emoji}</div><b>${c.name}</b><small>${c.rarity} · ${c.power} л.с. · ${c.year}</small><div class="card-price">${fmt(c.price)}</div><div class="card-actions">${mode==="market"?`<button class="buy">КУПИТЬ</button>`:`<button class="sell">ПРОДАТЬ</button>`}</div>`;
   d.querySelector('.fav').onclick=e=>{e.stopPropagation();fav?favs=favs.filter(x=>x!==idFor(c)):favs.push(idFor(c));save();renderAll()};
-  const action=d.querySelector('.buy,.sell');if(action)action.onclick=()=>mode==="market"?buy(c):sell(c);return d}
+  const action=d.querySelector('.buy,.sell');if(action)action.onclick=()=>mode==="market"?buy(c):sellFromGarage(c);return d}
 function filter(list,search,rarity){const q=(search||"").toLowerCase().trim();return list.filter(c=>(!q||c.name.toLowerCase().includes(q))&&(!rarity||c.rarity===rarity))}
 function renderGarage(){const list=filter(garage,$("#garageSearch").value,$("#garageRarity").value),g=$("#garageGrid");g.innerHTML="";list.forEach(c=>g.appendChild(card(c,"garage")));if(!list.length)g.innerHTML='<div class="empty">Гараж пуст. Крути рулетку или купи машину на рынке.</div>'}
 function renderCollection(){let list=filter(collection,$("#collectionSearch").value,$("#collectionRarity").value);const sort=$("#collectionSort").value;if(sort==="price")list.sort((a,b)=>b.price-a.price);else if(sort==="name")list.sort((a,b)=>a.name.localeCompare(b.name));else{const order={МИФИЧЕСКИЙ:5,ЛЕГЕНДАРНЫЙ:4,ЭПИЧЕСКИЙ:3,РЕДКИЙ:2,ОБЫЧНЫЙ:1};list.sort((a,b)=>(order[b.rarity]||0)-(order[a.rarity]||0))}const g=$("#collectionGrid");g.innerHTML="";list.forEach(c=>g.appendChild(card(c,"collection")));if(!list.length)g.innerHTML='<div class="empty">Пока ничего не собрано.</div>'}
@@ -126,15 +134,54 @@ function renderMarket(){const list=filter(cars,$("#marketSearch").value,$("#mark
 function renderAchievements(){const rare=collection.filter(c=>["ЛЕГЕНДАРНЫЙ","МИФИЧЕСКИЙ"].includes(c.rarity)).length;const myth=collection.filter(c=>c.rarity==="МИФИЧЕСКИЙ").length;const ach=[['Первый автомобиль',collection.length>=1],['10 машин',collection.length>=10],['50 машин',collection.length>=50],['Первая легенда',rare>=1],['Охотник за мифами',myth>=1],['Богач гаража',garage.reduce((s,c)=>s+c.price,0)>=100000000]];$("#achList").innerHTML=ach.map(a=>`<div class="ach"><span>${a[0]}</span><b class="${a[1]?"done":""}">${a[1]?"✓":"○"}</b></div>`).join('')}
 function renderAll(){renderTop();renderGarage();renderCollection();renderMarket();renderAchievements()}
 function addToCollection(c){if(!collection.some(x=>idFor(x)===idFor(c)))collection.unshift(c)}
-function keep(c){garage.unshift(c);addToCollection(c);save();renderAll();tg?.HapticFeedback?.notificationOccurred("success");$("#hint").textContent="Машина добавлена в гараж."}
-function sell(c){const i=garage.findIndex(x=>idFor(x)===idFor(c));if(i<0){tg?.showAlert?.("Этой машины нет в гараже");return}garage.splice(i,1);balance+=Math.round(c.price*.65);save();renderAll();tg?.HapticFeedback?.notificationOccurred("success");$("#hint").textContent=`Продано за ${fmt(c.price*.65)}.`}
+function keep(c){
+  if(resultActionDone||!selected)return;
+  resultActionDone=true; garage.unshift(c); addToCollection(c); selected=null; setResultActions(false); save(); renderAll();
+  tg?.HapticFeedback?.notificationOccurred("success"); $("#hint").textContent="Машина добавлена в гараж. Решение по этой находке уже принято.";
+}
+function sellFromGarage(c){
+  const i=garage.findIndex(x=>idFor(x)===idFor(c));
+  if(i<0)return;
+  garage.splice(i,1); balance+=Math.round(c.price*.65); save(); renderAll();
+  tg?.HapticFeedback?.notificationOccurred("success"); $("#hint").textContent=`Продано за ${fmt(c.price*.65)}.`;
+}
+function sellSelected(c){
+  if(resultActionDone||!selected)return;
+  resultActionDone=true; addToCollection(c); balance+=Math.round(c.price*.65); selected=null; setResultActions(false); save();
+  tg?.HapticFeedback?.notificationOccurred("success"); $("#hint").textContent=`${c.name} продан сразу за ${fmt(c.price*.65)}. Машина сохранена в коллекции.`;
+}
 function buy(c){if(balance<c.price){tg?.showAlert?.("Не хватает денег");return}balance-=c.price;garage.unshift(c);addToCollection(c);save();renderAll();tg?.HapticFeedback?.notificationOccurred("success");$("#hint").textContent=`${c.name} куплен и добавлен в гараж.`}
-function buildReel(win){const track=$("#rouletteTrack");track.innerHTML="";const arr=[];for(let i=0;i<62;i++)arr.push(cars[Math.floor(Math.random()*cars.length)]);const winnerIndex=52;arr[winnerIndex]=win;arr.forEach(c=>{const d=document.createElement('div');d.className='roulette-card '+clsFor(c);d.innerHTML=`<div class="emoji">${c.emoji}</div><b>${c.name}</b><small>${c.rarity}<br>${fmt(c.price)}</small>`;track.appendChild(d)});return winnerIndex}
-function spin(){if(spinning)return;if(balance<150000){tg?.showAlert?.("Не хватает 150 000 ₽");return}balance-=150000;save();spinning=true;$("#spinBtn").disabled=true;$("#spinBtn").style.opacity=.55;const win=weightedDraw(),idx=buildReel(win),track=$("#rouletteTrack"),viewport=$(".roulette-viewport");track.style.transition="none";track.style.transform="translateX(0px)";void track.offsetWidth;const cardW=141;const center=viewport.clientWidth/2;const target=idx*cardW+66-center;track.style.transition="transform 5.2s cubic-bezier(.08,.72,.12,1)";track.style.transform=`translateX(-${target}px)`;setTimeout(()=>{spinning=false;$("#spinBtn").disabled=false;$("#spinBtn").style.opacity=1;renderResult(win);$("#hint").textContent=`Выпала ${win.rarity.toLowerCase()} машина. Решай: в гараж или продать.`;tg?.HapticFeedback?.notificationOccurred(win.rarity==="МИФИЧЕСКИЙ"?"success":"warning")},5300)}
+function buildReel(win){
+  const track=$("#rouletteTrack"); track.innerHTML=""; const arr=[];
+  for(let i=0;i<62;i++)arr.push(cars[Math.floor(Math.random()*cars.length)]);
+  const winnerIndex=52; arr[winnerIndex]=win;
+  arr.forEach((c,i)=>{
+    const d=document.createElement("div"); d.className="roulette-card "+clsFor(c)+(i===winnerIndex?" reel-winner":"");
+    d.innerHTML=`<div class="emoji">${c.emoji}</div><b>${c.name}</b><small>${c.rarity}<br>${fmt(c.price)}</small>`;
+    track.appendChild(d);
+  });
+  return track.children[winnerIndex];
+}
+function spin(){
+  if(spinning)return;
+  if(balance<150000){tg?.showAlert?.("Не хватает 150 000 ₽");return}
+  balance-=150000; save(); spinning=true; selected=null; setResultActions(false);
+  $("#spinBtn").disabled=true; $("#spinBtn").style.opacity=.55;
+  const win=weightedDraw(), winnerEl=buildReel(win), track=$("#rouletteTrack"), viewport=$(".roulette-viewport");
+  track.style.transition="none"; track.style.transform="translateX(0px)"; void track.offsetWidth;
+  const target=winnerEl.offsetLeft + winnerEl.offsetWidth/2 - viewport.clientWidth/2;
+  track.style.transition="transform 5.2s cubic-bezier(.08,.72,.12,1)";
+  track.style.transform=`translateX(-${Math.max(0,target)}px)`;
+  setTimeout(()=>{
+    spinning=false; $("#spinBtn").disabled=false; $("#spinBtn").style.opacity=1;
+    renderResult(win); $("#hint").textContent=`Выпала ${win.rarity.toLowerCase()} машина. Решай: в гараж или продать.`;
+    tg?.HapticFeedback?.notificationOccurred(win.rarity==="МИФИЧЕСКИЙ"?"success":"warning");
+  },5350);
+}
 $("#spinBtn").onclick=spin;
-$("#keep").onclick=()=>selected&&keep(selected);$("#sell").onclick=()=>selected&&sell(selected);
+$("#keep").onclick=()=>selected&&keep(selected);$("#sell").onclick=()=>selected&&sellSelected(selected);
 $("#free").onclick=()=>{const today=new Date().toDateString();if(localStorage.getItem(KEY.daily)===today){tg?.showAlert?.("Ежедневное открытие уже использовано");return}localStorage.setItem(KEY.daily,today);const c=weightedDraw();streak++;renderResult(c);$("#hint").textContent="🎁 Бесплатное открытие! Выбери судьбу машины.";save();renderAll();tg?.HapticFeedback?.notificationOccurred("success")};
 
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active-panel'));$("#"+b.dataset.tab).classList.add('active-panel')});
 ['#garageSearch','#garageRarity','#collectionSearch','#collectionRarity','#collectionSort','#marketSearch','#marketRarity'].forEach(s=>$(s).addEventListener(s.includes('Search')?'input':'change',renderAll));
-renderResult(cars[3]);renderAll();
+setResultActions(false); renderAll();
