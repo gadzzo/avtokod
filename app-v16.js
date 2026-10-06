@@ -551,3 +551,28 @@ migrate16();addDepthPanel16();renderAll();
   finishSpin=function(){oldFinish();setTimeout(()=>{const w=document.querySelector('.roulette-card.reel-winner');if(w)w.animate([{transform:'scale(1)'},{transform:'scale(1.1)'},{transform:'scale(1)'}],{duration:650,easing:'cubic-bezier(.2,.9,.2,1)'});},30)};
   refreshMotion();
 })();
+
+/* ===== v18 — CINEMATIC FX CONTROLLER ===== */
+(function cinematic18(){
+  const layer=()=>{let x=document.getElementById('akFx18');if(!x){x=document.createElement('div');x.id='akFx18';x.className='ak-fx-layer';document.body.appendChild(x)}return x};
+  const burst=(kind='particle',count=22,origin)=>{
+    const root=layer(), r=origin||{x:innerWidth/2,y:innerHeight/2};
+    for(let i=0;i<count;i++){
+      const e=document.createElement('i');e.className='ak-'+kind;
+      const a=Math.random()*Math.PI*2, d=70+Math.random()*220;
+      e.style.left=r.x+'px';e.style.top=r.y+'px';e.style.setProperty('--dx',Math.cos(a)*d+'px');e.style.setProperty('--dy',Math.sin(a)*d+'px');
+      e.style.setProperty('--x',Math.cos(a)*d+'px');e.style.setProperty('--y',(Math.sin(a)*d+100+Math.random()*140)+'px');e.style.setProperty('--r',(Math.random()*900-450)+'deg');
+      e.style.color=['#31e86d','#4da3ff','#b86cff','#f5b94b','#ff5d6c','#fff'][Math.floor(Math.random()*6)];
+      if(kind==='confetti'){e.style.width=(5+Math.random()*7)+'px';e.style.height=(8+Math.random()*9)+'px'}
+      root.appendChild(e);setTimeout(()=>e.remove(),1700);
+    }
+  };
+  const ring=(origin)=>{const r=origin||{x:innerWidth/2,y:innerHeight/2},e=document.createElement('i');e.className='ak-ring';e.style.left=r.x+'px';e.style.top=r.y+'px';layer().appendChild(e);setTimeout(()=>e.remove(),850)};
+  const coins=(n=9,origin)=>{const root=layer(),r=origin||{x:innerWidth/2,y:innerHeight/2};for(let i=0;i<n;i++){const e=document.createElement('i');e.className='ak-coin';e.textContent=Math.random()>.45?'₽':'🪙';const a=Math.random()*Math.PI*2,d=70+Math.random()*180;e.style.left=r.x+'px';e.style.top=r.y+'px';e.style.setProperty('--x',Math.cos(a)*d+'px');e.style.setProperty('--y',(Math.sin(a)*d+70)+'px');root.appendChild(e);setTimeout(()=>e.remove(),1200)}};
+  const center=()=>{const v=document.querySelector('.roulette-viewport');if(v){const q=v.getBoundingClientRect();return{x:q.left+q.width/2,y:q.top+q.height/2}}return{x:innerWidth/2,y:innerHeight/2}};
+  const oldSpin18=spin;spin=function(){const v=document.querySelector('.roulette-viewport');v?.classList.add('ak-scanning');const b=document.getElementById('spinBtn');b?.classList.add('spin-btn-cinematic');burst('particle',18,center());oldSpin18();setTimeout(()=>v?.classList.remove('ak-scanning'),5400)};
+  const oldFinish18=finishSpin;finishSpin=function(){oldFinish18();setTimeout(()=>{const w=document.querySelector('.roulette-card.reel-winner');const p=w?.getBoundingClientRect();const o=p?{x:p.left+p.width/2,y:p.top+p.height/2}:center();burst('particle',35,o);ring(o);document.body.classList.remove('ak-shake');void document.body.offsetWidth;document.body.classList.add('ak-shake');setTimeout(()=>document.body.classList.remove('ak-shake'),350);const r=w?.querySelector('.rarity,.badge,.rarity-badge');const text=(r?.textContent||'').toLowerCase();if(/леген|миф|эксклюз|epic|legend|myth|exclusive/.test(text))burst('confetti',70,o)},80)};
+  document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(/продать|купить|забрать|бонус|награ|улучш|гараж|риск/i.test(b.textContent||'')){const q=b.getBoundingClientRect();coins(7,{x:q.left+q.width/2,y:q.top+q.height/2});ring({x:q.left+q.width/2,y:q.top+q.height/2})}});
+  document.addEventListener('pointermove',e=>{const c=e.target.closest('.car-card');if(!c||innerWidth<700)return;const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform=`translateY(-4px) rotateX(${(-y*5).toFixed(2)}deg) rotateY(${(x*7).toFixed(2)}deg) scale(1.01)`});
+  document.addEventListener('pointerout',e=>{const c=e.target.closest('.car-card');if(c)c.style.transform=''});
+})();
