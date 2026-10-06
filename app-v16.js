@@ -207,9 +207,21 @@ const SPIN_MODES={
 };
 let spinMode="ordinary", spinTimer=null, currentWinnerEl=null, currentTarget=0, currentTrack=null, currentViewport=null;
 const rarityRank={"ОБЫЧНЫЙ":0,"РЕДКИЙ":1,"ЭПИЧЕСКИЙ":2,"ЛЕГЕНДАРНЫЙ":3,"МИФИЧЕСКИЙ":4,"ЭКСКЛЮЗИВНЫЙ":5};
+const COUNTRY_KEY="ak_spin_country_v20";
+let spinCountry=localStorage.getItem(COUNTRY_KEY)||"all";
+const countryNames={all:"ВСЕ СТРАНЫ",Россия:"РОССИЯ",Япония:"ЯПОНИЯ",Германия:"ГЕРМАНИЯ",Италия:"ИТАЛИЯ",Франция:"ФРАНЦИЯ",США:"США","Южная Корея":"КОРЕЯ",Китай:"КИТАЙ",Другое:"ДРУГИЕ"};
 function poolForMode(mode=spinMode){
   const min=SPIN_MODES[mode].min;
-  return cars.filter(c=> mode==="ordinary" ? c.rarity==="ОБЫЧНЫЙ" : (rarityRank[c.rarity]||0)>=min);
+  return cars.filter(c=>{
+    const rarityOk=mode==="ordinary" ? c.rarity==="ОБЫЧНЫЙ" : (rarityRank[c.rarity]||0)>=min;
+    const countryOk=spinCountry==="all" || countryOf(c)===spinCountry;
+    return rarityOk&&countryOk;
+  });
+}
+function updateCountryUI(){
+  document.querySelectorAll(".country-btn").forEach(b=>b.classList.toggle("selected",b.dataset.country===spinCountry));
+  const label=$("#spinCountryLabel"); if(label) label.textContent=countryNames[spinCountry]||spinCountry;
+  const pool=poolForMode(); const info=$("#countryPoolInfo"); if(info) info.textContent=`Машин в рулетке: ${pool.length} · ${countryNames[spinCountry]||spinCountry}`;
 }
 function weightedDraw(pool=cars){
   const weights=pool.map(c=>Math.max(.001,parseFloat(c.chance)||.001));
@@ -305,7 +317,8 @@ function claimLevelBonus(){const level=Math.max(1,Math.floor(collection.length/5
 $("#claimDailyBonus").onclick=claimDailyBonus;$("#claimStreakBonus").onclick=claimStreakBonus;$("#claimCollectionBonus").onclick=claimCollectionBonus;$("#claimLevelBonus").onclick=claimLevelBonus;
 $("#spinBtn").onclick=spin;
 $("#skipSpin").onclick=()=>{if(spinning)finishSpin()};
-document.querySelectorAll(".spin-mode").forEach(b=>b.onclick=()=>{if(spinning)return;spinMode=b.dataset.mode;updateSpinModeUI()});
+document.querySelectorAll(".spin-mode").forEach(b=>b.onclick=()=>{if(spinning)return;spinMode=b.dataset.mode;updateSpinModeUI();updateCountryUI();updateCountryUI()});
+document.querySelectorAll(".country-btn").forEach(b=>b.onclick=()=>{if(spinning)return;spinCountry=b.dataset.country;localStorage.setItem(COUNTRY_KEY,spinCountry);updateCountryUI();tg?.HapticFeedback?.selectionChanged?.()});
 $("#spinBtn").onclick=spin;
 $("#keep").onclick=keepSelected;$("#sell").onclick=sellSelected;
 $("#free").onclick=()=>{const today=new Date().toDateString();if(localStorage.getItem(KEY.daily)===today){tg?.showAlert?.("Ежедневное открытие уже использовано");return}localStorage.setItem(KEY.daily,today);const c=weightedDraw();streak++;selectedCarIndex=cars.indexOf(c);renderResult(c);$("#hint").textContent="🎁 Бесплатное открытие! Выбери судьбу машины.";save();renderAll();tg?.HapticFeedback?.notificationOccurred("success")};
