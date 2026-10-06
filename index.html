@@ -1,14 +1,34 @@
-<!doctype html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>АВТОКОД</title><script src="https://telegram.org/js/telegram-web-app.js"></script><link rel="stylesheet" href="style.css?v=6"></head><body><div class="app">
+<!doctype html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>АВТОКОД</title><script src="https://telegram.org/js/telegram-web-app.js"></script><link rel="stylesheet" href="style.css?v=8"></head><body><div class="app">
 <header><div><div class="brand">АВТО<span>КОД</span></div><div class="sub">коллекционируй автомобили</div></div><div class="money">₽ <b id="balance">2 500 000</b></div></header>
 <div class="stats"><div>🚘 <b id="cars">0</b><small>в гараже</small></div><div>⭐ <b id="level">1</b><small>уровень</small></div><div>🔥 <b id="streak">0</b><small>серия</small></div></div>
-<div class="tabs"><button class="active" data-tab="spin">Крутить</button><button data-tab="garage">Гараж</button><button data-tab="collection">Коллекция</button><button data-tab="market">Рынок</button></div>
+<div class="tabs"><button class="active" data-tab="spin">Крутить</button><button data-tab="garage">Гараж</button><button data-tab="collection">Коллекция</button><button data-tab="market">Рынок</button><button data-tab="bonuses">Бонусы</button></div>
 <main id="spin" class="panel active-panel">
 <div class="roulette-wrap"><div class="pointer">▼</div><div class="roulette-viewport"><div id="rouletteTrack" class="roulette-track"></div></div></div>
 <div class="result-panel hidden-result" id="spinResult"><div class="result-main"><div><div class="result-label">ВЫПАЛО</div><b id="carName"></b><span id="price"></span></div><div class="result-rarity" id="rarity"></div></div><div class="result-actions"><button id="keep" class="green">🚘 В ГАРАЖ</button><button id="sell" class="dark">💰 ПРОДАТЬ</button></div></div>
-<div class="hint" id="hint">Нажми «КРУТИТЬ» — рулетка остановится на случайной машине.</div><button class="open" id="spinBtn">🎰 КРУТИТЬ <span>150 000 ₽</span></button><button class="free" id="free">🎁 Ежедневное открытие</button>
+<div class="hint" id="hint">Нажми «КРУТИТЬ» — рулетка остановится на случайной машине.</div><button class="open" id="spinBtn">🎰 КРУТИТЬ <span>150 000 ₽</span></button>
+<button class="skip-spin" id="skipSpin" disabled>⏩ ПРОПУСТИТЬ ПРОКРУТКУ</button>
+<div class="spin-mode-label">ТИП ПРОКРУТКИ: <b id="spinModeLabel">ОБЫЧНАЯ ПРОКРУТКА</b></div>
+<div class="spin-modes">
+<button class="spin-mode mode-ordinary selected" data-mode="ordinary"><span>ОБЫЧНАЯ</span><small>только обычные</small><b>150 000 ₽</b></button>
+<button class="spin-mode mode-rare" data-mode="rare"><span>РЕДКАЯ+</span><small>редкие и выше</small><b>500 000 ₽</b></button>
+<button class="spin-mode mode-epic" data-mode="epic"><span>ЭПИЧЕСКАЯ+</span><small>эпические и выше</small><b>2 000 000 ₽</b></button>
+<button class="spin-mode mode-legendary" data-mode="legendary"><span>ЛЕГЕНДАРНАЯ+</span><small>легендарные и выше</small><b>10 000 000 ₽</b></button>
+<button class="spin-mode mode-exclusive" data-mode="exclusive"><span>ЭКСКЛЮЗИВНАЯ+</span><small>только эксклюзивные</small><b>50 000 000 ₽</b></button>
+</div>
+<button class="free" id="free">🎁 Ежедневное открытие</button>
 <div class="achievements"><b>Достижения</b><div id="achList"></div></div>
 </main>
 <main id="garage" class="panel"><div class="section-head"><b>Мой гараж</b><span id="garageValue">0 ₽</span></div><div class="toolbar"><input id="garageSearch" placeholder="Поиск марки или модели"><select id="garageRarity"><option value="">Все редкости</option><option>ОБЫЧНЫЙ</option><option>РЕДКИЙ</option><option>ЭПИЧЕСКИЙ</option><option>ЛЕГЕНДАРНЫЙ</option><option>МИФИЧЕСКИЙ</option><option>ЭКСКЛЮЗИВНЫЙ</option></select></div><div id="garageGrid" class="car-grid"></div></main>
 <main id="collection" class="panel"><div class="section-head"><b>Коллекция</b><span id="collectionCount">0 / 100</span></div><div class="toolbar"><input id="collectionSearch" placeholder="Поиск марки или модели"><select id="collectionRarity"><option value="">Все редкости</option><option>ОБЫЧНЫЙ</option><option>РЕДКИЙ</option><option>ЭПИЧЕСКИЙ</option><option>ЛЕГЕНДАРНЫЙ</option><option>МИФИЧЕСКИЙ</option><option>ЭКСКЛЮЗИВНЫЙ</option></select><select id="collectionSort"><option value="rarity">Редкость</option><option value="price">Цена</option><option value="name">Название</option></select></div><div id="collectionGrid" class="car-grid"></div></main>
-<main id="market" class="panel"><div class="section-head"><b>Рынок</b><span>покупка → сразу в гараж</span></div><div class="toolbar"><input id="marketSearch" placeholder="Поиск марки или модели"><select id="marketRarity"><option value="">Все редкости</option><option>ОБЫЧНЫЙ</option><option>РЕДКИЙ</option><option>ЭПИЧЕСКИЙ</option><option>ЛЕГЕНДАРНЫЙ</option><option>МИФИЧЕСКИЙ</option><option>ЭКСКЛЮЗИВНЫЙ</option></select></div><div id="marketGrid" class="car-grid"></div></main>
-</div><script src="app-v6.js"></script></body></html>
+<main id="market" class="panel"><div class="section-head"><b>Рынок</b><span>покупка → сразу в гараж</span></div><div class="toolbar"><input id="marketSearch" placeholder="Поиск марки или модели"><select id="marketRarity"><option value="">Все редкости</option><option>ОБЫЧНЫЙ</option><option>РЕДКИЙ</option><option>ЭПИЧЕСКИЙ</option><option>ЛЕГЕНДАРНЫЙ</option><option>МИФИЧЕСКИЙ</option><option>ЭКСКЛЮЗИВНЫЙ</option></select></div><div id="marketGrid" class="car-grid"></div></main><main id="bonuses" class="panel">
+<div class="section-head"><b>🎁 Бонусы</b><span id="bonusBalanceLabel">Награды</span></div>
+<div class="bonus-hero"><div class="bonus-hero-icon">🎁</div><div><b>Бонусный центр</b><small>Забирай награды и получай деньги на новые прокрутки.</small></div></div>
+<div class="bonus-grid">
+<div class="bonus-card daily-bonus"><div class="bonus-icon">💰</div><div><b>Ежедневный бонус</b><small>Новая награда каждые 24 часа</small></div><strong id="dailyBonusAmount">+250 000 ₽</strong><button id="claimDailyBonus" class="bonus-btn">ЗАБРАТЬ</button></div>
+<div class="bonus-card streak-bonus"><div class="bonus-icon">🔥</div><div><b>Бонус за серию</b><small>Чем длиннее серия, тем больше награда</small></div><strong id="streakBonusAmount">+0 ₽</strong><button id="claimStreakBonus" class="bonus-btn">ЗАБРАТЬ</button></div>
+<div class="bonus-card collection-bonus"><div class="bonus-icon">🏆</div><div><b>За коллекцию</b><small>Награда за каждые 10 уникальных машин</small></div><strong id="collectionBonusAmount">+0 ₽</strong><button id="claimCollectionBonus" class="bonus-btn">ЗАБРАТЬ</button></div>
+<div class="bonus-card level-bonus"><div class="bonus-icon">⭐</div><div><b>За уровень</b><small>Награда за достижение нового уровня</small></div><strong id="levelBonusAmount">+0 ₽</strong><button id="claimLevelBonus" class="bonus-btn">ЗАБРАТЬ</button></div>
+</div>
+<div class="bonus-info"><b>Как работают бонусы</b><p>Ежедневный бонус можно забирать раз в сутки. Бонус за серию зависит от твоей текущей серии, а бонусы за коллекцию и уровень появляются по мере прогресса.</p></div>
+</main>
+</div><script src="app-v8.js"></script></body></html>
