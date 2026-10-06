@@ -130,3 +130,32 @@ body.ak-shake{animation:akShake .32s ease}
 .car-card:hover .emoji{transform:translateY(-6px) rotate(-2deg) scale(1.05);filter:drop-shadow(0 12px 16px rgba(0,0,0,.35))}
 .car-card{perspective:700px}
 @media(prefers-reduced-motion:reduce){.ak-fx-layer{display:none!important}.roulette-viewport.ak-scanning:before{display:none!important}}
+
+/* ===== v19 — ULTIMATE CINEMATIC FX ===== */
+@keyframes fx19Spark{0%{opacity:0;transform:translate(-50%,-50%) scale(.2) rotate(0)}15%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(.15) rotate(var(--r))}}
+@keyframes fx19Conf{0%{opacity:1;transform:translate(-50%,-50%) rotate(0) scale(1)}100%{opacity:0;transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) rotate(var(--r)) scale(.6)}}
+@keyframes fx19Trail{0%{opacity:0;transform:translate(-50%,-50%) scaleX(.2)}20%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scaleX(1)}}
+@keyframes fx19Ray{0%{opacity:0;transform:translate(-50%,-50%) scale(.1) rotate(0)}30%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(2.7) rotate(180deg)}}
+@keyframes fx19Flash{0%{opacity:0}12%{opacity:.95}100%{opacity:0}}
+@keyframes fx19WinIn{0%{opacity:0;transform:scale(.55) translateY(50px) rotateX(18deg)}70%{transform:scale(1.035) translateY(-4px)}100%{opacity:1;transform:none}}
+@keyframes fx19Car{0%{transform:translateY(80px) scale(.35) rotate(-8deg);filter:blur(8px)}65%{transform:translateY(-10px) scale(1.08) rotate(2deg)}100%{transform:none;filter:none}}
+@keyframes fx19Glow{0%,100%{filter:drop-shadow(0 0 12px currentColor)}50%{filter:drop-shadow(0 0 38px currentColor)}}
+@keyframes fx19New{0%{transform:scale(0) rotate(-20deg)}70%{transform:scale(1.15) rotate(4deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes fx19Drive{0%{opacity:0;transform:translateX(-35px) scale(.94)}100%{opacity:1;transform:none}}
+@keyframes fx19Number{0%{transform:scale(.75);filter:brightness(1)}45%{transform:scale(1.18);filter:brightness(1.7)}100%{transform:none;filter:none}}
+@keyframes fx19Press{0%,100%{filter:none}50%{filter:brightness(1.55) drop-shadow(0 0 18px rgba(49,232,109,.55));transform:scale(.94)}}
+.ak-fx19{position:fixed;inset:0;z-index:10001;pointer-events:none;overflow:hidden}.fx19-spark,.fx19-confetti,.fx19-trail,.fx19-ray{position:absolute;left:0;top:0;pointer-events:none}.fx19-spark{width:7px;height:7px;border-radius:50%;background:#fff;box-shadow:0 0 14px currentColor;animation:fx19Spark var(--d) ease-out forwards}.fx19-confetti{width:8px;height:16px;background:linear-gradient(135deg,#fff,transparent);box-shadow:0 0 8px rgba(255,255,255,.5);animation:fx19Conf var(--d) cubic-bezier(.12,.75,.2,1) forwards}.fx19-trail{width:50px;height:5px;border-radius:50%;background:linear-gradient(90deg,transparent,#fff,transparent);animation:fx19Trail var(--d) ease-out forwards}.fx19-ray{width:30px;height:150px;background:linear-gradient(transparent,rgba(255,255,255,.8),transparent);transform-origin:center;animation:fx19Ray var(--d) ease-out forwards}.fx19-flash{position:fixed;inset:0;z-index:10000;background:#fff;pointer-events:none;animation:fx19Flash .5s ease-out forwards}.fx19-number{animation:fx19Number .42s cubic-bezier(.2,.9,.2,1)}.fx19-press{animation:fx19Press .26s ease}.fx19-new{position:absolute;top:8px;right:8px;padding:4px 7px;border-radius:8px;background:#31e86d;color:#07100a;font-size:10px;font-weight:900;z-index:5;animation:fx19New .45s cubic-bezier(.2,.9,.2,1)}
+#garageGrid .car-card{animation:fx19Drive .42s ease both;animation-delay:var(--drive-delay,0ms)}
+
+/* cinematic win screen */
+.ak-win19{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s ease}.ak-win19.show{opacity:1;pointer-events:auto}.win19-backdrop{position:absolute;inset:0;background:radial-gradient(circle at 50% 42%,rgba(255,255,255,.13),rgba(5,7,10,.88) 58%,rgba(0,0,0,.96));backdrop-filter:blur(8px)}.win19-card{position:relative;width:min(88vw,420px);padding:28px 22px 22px;border:1px solid rgba(255,255,255,.18);border-radius:28px;text-align:center;background:linear-gradient(145deg,rgba(25,28,35,.96),rgba(9,11,15,.98));box-shadow:0 30px 100px rgba(0,0,0,.65),0 0 80px rgba(49,232,109,.12);transform-style:preserve-3d;animation:fx19WinIn .65s cubic-bezier(.17,.84,.25,1) both}.win19-top{font-size:12px;letter-spacing:3px;font-weight:900;opacity:.85}.win19-car{font-size:92px;line-height:1.1;margin:18px 0 6px;animation:fx19Car .75s cubic-bezier(.16,.86,.24,1) .12s both,fx19Glow 2s ease-in-out .9s infinite}.win19-rarity{font-size:13px;font-weight:900;letter-spacing:2px}.win19-card h2{font-size:25px;margin:8px 0}.win19-price{font-size:25px;font-weight:1000}.win19-sub{opacity:.55;margin:7px 0 20px}.win19-close{width:100%;padding:13px;border:0;border-radius:14px;font-weight:900;cursor:pointer}.ak-win19.common .win19-rarity{color:#aaa}.ak-win19.rare .win19-rarity{color:#4da3ff}.ak-win19.epic .win19-rarity{color:#b86cff}.ak-win19.legendary .win19-rarity{color:#f5b94b}.ak-win19.mythic .win19-rarity{color:#ff5d6c}.ak-win19.exclusive .win19-rarity{color:#fff;text-shadow:0 0 20px #fff}.ak-win19.legendary .win19-card{box-shadow:0 30px 100px rgba(0,0,0,.7),0 0 90px rgba(245,185,75,.25)}.ak-win19.mythic .win19-card{box-shadow:0 30px 100px rgba(0,0,0,.7),0 0 100px rgba(255,50,80,.3)}.ak-win19.exclusive .win19-card{box-shadow:0 30px 120px rgba(0,0,0,.8),0 0 130px rgba(255,255,255,.3)}
+.fx19-dark .ak-win19{filter:contrast(1.12)}
+
+/* energy around the main spin button */
+#spinBtn{transform-origin:center;will-change:transform,filter}#spinBtn:hover{filter:brightness(1.15) drop-shadow(0 0 18px rgba(49,232,109,.35));transform:translateY(-2px) scale(1.015)}#spinBtn:active{transform:scale(.94)}
+
+/* rarity-specific motion */
+.result-panel.legendary,.result-panel.mythic,.result-panel.exclusive{animation:akPop .42s cubic-bezier(.2,.9,.2,1) both,fx19Glow 1.8s ease-in-out infinite!important}
+
+@media(max-width:700px){.win19-card{width:calc(100vw - 34px);padding:23px 18px 18px}.win19-car{font-size:76px}.win19-card h2{font-size:21px}}
+@media(prefers-reduced-motion:reduce){.ak-fx19,.fx19-flash{display:none!important}.ak-win19,.win19-card,.win19-car{animation:none!important;transition:none!important}}

@@ -277,9 +277,9 @@ function spin(){
   currentWinnerEl=winnerEl; currentTrack=track; currentViewport=viewport;
   track.style.transition="none"; track.style.transform="translateX(0px)"; void track.offsetWidth;
   currentTarget=winnerEl.offsetLeft+winnerEl.offsetWidth/2-viewport.clientWidth/2;
-  track.style.transition="transform 5.2s cubic-bezier(.08,.72,.12,1)";
+  track.style.transition="transform 6.8s cubic-bezier(.08,.72,.12,1)";
   track.style.transform=`translateX(-${Math.max(0,currentTarget)}px)`;
-  spinTimer=setTimeout(finishSpin,5350);
+  spinTimer=setTimeout(finishSpin,7050);
 }
 function bonusToday(){return new Date().toDateString()}
 function renderBonuses(){
@@ -570,9 +570,49 @@ migrate16();addDepthPanel16();renderAll();
   const ring=(origin)=>{const r=origin||{x:innerWidth/2,y:innerHeight/2},e=document.createElement('i');e.className='ak-ring';e.style.left=r.x+'px';e.style.top=r.y+'px';layer().appendChild(e);setTimeout(()=>e.remove(),850)};
   const coins=(n=9,origin)=>{const root=layer(),r=origin||{x:innerWidth/2,y:innerHeight/2};for(let i=0;i<n;i++){const e=document.createElement('i');e.className='ak-coin';e.textContent=Math.random()>.45?'₽':'🪙';const a=Math.random()*Math.PI*2,d=70+Math.random()*180;e.style.left=r.x+'px';e.style.top=r.y+'px';e.style.setProperty('--x',Math.cos(a)*d+'px');e.style.setProperty('--y',(Math.sin(a)*d+70)+'px');root.appendChild(e);setTimeout(()=>e.remove(),1200)}};
   const center=()=>{const v=document.querySelector('.roulette-viewport');if(v){const q=v.getBoundingClientRect();return{x:q.left+q.width/2,y:q.top+q.height/2}}return{x:innerWidth/2,y:innerHeight/2}};
-  const oldSpin18=spin;spin=function(){const v=document.querySelector('.roulette-viewport');v?.classList.add('ak-scanning');const b=document.getElementById('spinBtn');b?.classList.add('spin-btn-cinematic');burst('particle',18,center());oldSpin18();setTimeout(()=>v?.classList.remove('ak-scanning'),5400)};
+  const oldSpin18=spin;spin=function(){const v=document.querySelector('.roulette-viewport');v?.classList.add('ak-scanning');const b=document.getElementById('spinBtn');b?.classList.add('spin-btn-cinematic');burst('particle',18,center());oldSpin18();setTimeout(()=>v?.classList.remove('ak-scanning'),7200)};
   const oldFinish18=finishSpin;finishSpin=function(){oldFinish18();setTimeout(()=>{const w=document.querySelector('.roulette-card.reel-winner');const p=w?.getBoundingClientRect();const o=p?{x:p.left+p.width/2,y:p.top+p.height/2}:center();burst('particle',35,o);ring(o);document.body.classList.remove('ak-shake');void document.body.offsetWidth;document.body.classList.add('ak-shake');setTimeout(()=>document.body.classList.remove('ak-shake'),350);const r=w?.querySelector('.rarity,.badge,.rarity-badge');const text=(r?.textContent||'').toLowerCase();if(/леген|миф|эксклюз|epic|legend|myth|exclusive/.test(text))burst('confetti',70,o)},80)};
   document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(/продать|купить|забрать|бонус|награ|улучш|гараж|риск/i.test(b.textContent||'')){const q=b.getBoundingClientRect();coins(7,{x:q.left+q.width/2,y:q.top+q.height/2});ring({x:q.left+q.width/2,y:q.top+q.height/2})}});
   document.addEventListener('pointermove',e=>{const c=e.target.closest('.car-card');if(!c||innerWidth<700)return;const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform=`translateY(-4px) rotateX(${(-y*5).toFixed(2)}deg) rotateY(${(x*7).toFixed(2)}deg) scale(1.01)`});
   document.addEventListener('pointerout',e=>{const c=e.target.closest('.car-card');if(c)c.style.transform=''});
+})();
+
+
+/* ===== v19 — ULTIMATE CINEMATIC EXPERIENCE ===== */
+(function ultimate19(){
+  const q=s=>document.querySelector(s);
+  const rarityClass=r=>({"ОБЫЧНЫЙ":"common","РЕДКИЙ":"rare","ЭПИЧЕСКИЙ":"epic","ЛЕГЕНДАРНЫЙ":"legendary","МИФИЧЕСКИЙ":"mythic","ЭКСКЛЮЗИВНЫЙ":"exclusive"}[r]||'common');
+  const fx=()=>{let l=document.getElementById('akFx19');if(!l){l=document.createElement('div');l.id='akFx19';l.className='ak-fx19';document.body.appendChild(l)}return l};
+  const burst=(n=20,kind='spark',origin)=>{const l=fx(),r=origin||{x:innerWidth/2,y:innerHeight/2};for(let i=0;i<n;i++){const e=document.createElement('i');e.className='fx19-'+kind;e.style.left=r.x+'px';e.style.top=r.y+'px';const a=Math.random()*Math.PI*2,d=70+Math.random()*260;e.style.setProperty('--x',Math.cos(a)*d+'px');e.style.setProperty('--y',Math.sin(a)*d+70+'px');e.style.setProperty('--r',(Math.random()*720-360)+'deg');e.style.setProperty('--d',(0.55+Math.random()*.7)+'s');l.appendChild(e);setTimeout(()=>e.remove(),1600)}};
+  const flash=()=>{const e=document.createElement('div');e.className='fx19-flash';document.body.appendChild(e);setTimeout(()=>e.remove(),520)};
+  const cinematic=(c)=>{
+    if(!c)return;
+    const old=q('#akWin19');old?.remove();
+    const rarity=c.rarity||'ОБЫЧНЫЙ', cls=rarityClass(rarity);
+    const o=document.createElement('div');o.id='akWin19';o.className='ak-win19 '+cls;
+    o.innerHTML=`<div class="win19-backdrop"></div><div class="win19-card"><div class="win19-top">${rarity==='ЭКСКЛЮЗИВНЫЙ'?'💎':rarity==='МИФИЧЕСКИЙ'?'☠️':rarity==='ЛЕГЕНДАРНЫЙ'?'👑':rarity==='ЭПИЧЕСКИЙ'?'⚡':rarity==='РЕДКИЙ'?'✦':'🚘'} <span>ПОЛУЧЕНО</span></div><div class="win19-car">${c.emoji||'🚘'}</div><div class="win19-rarity">${rarity}</div><h2>${c.name}</h2><div class="win19-price">${fmt(c.price)}</div><div class="win19-sub">${c.power||0} л.с. · ${c.year||''}</div><button class="win19-close">ПРОДОЛЖИТЬ</button></div>`;
+    document.body.appendChild(o);
+    setTimeout(()=>o.classList.add('show'),30);
+    const p=q('.roulette-card.reel-winner')?.getBoundingClientRect(); const center=p?{x:p.left+p.width/2,y:p.top+p.height/2}:{x:innerWidth/2,y:innerHeight/2};
+    flash(); burst(45,'spark',center); burst(28,'trail',center);
+    if(['ЭПИЧЕСКИЙ','ЛЕГЕНДАРНЫЙ','МИФИЧЕСКИЙ','ЭКСКЛЮЗИВНЫЙ'].includes(rarity))burst(rarity==='ЭКСКЛЮЗИВНЫЙ'?110:75,'confetti',center);
+    if(['ЛЕГЕНДАРНЫЙ','МИФИЧЕСКИЙ','ЭКСКЛЮЗИВНЫЙ'].includes(rarity))burst(30,'ray',center);
+    if(rarity==='ЭКСКЛЮЗИВНЫЙ'){document.body.classList.add('fx19-dark');setTimeout(()=>document.body.classList.remove('fx19-dark'),900)}
+    if(navigator.vibrate) navigator.vibrate(rarity==='ЭКСКЛЮЗИВНЫЙ'?[30,30,80,30,160]:rarity==='МИФИЧЕСКИЙ'?[25,25,100]:rarity==='ЛЕГЕНДАРНЫЙ'?[20,30,70]:[10]);
+    o.querySelector('.win19-close').onclick=()=>{o.classList.remove('show');setTimeout(()=>o.remove(),280)};
+    o.addEventListener('click',e=>{if(e.target===o.querySelector('.win19-backdrop'))o.querySelector('.win19-close').click()});
+  };
+  const oldFinish19=finishSpin;
+  finishSpin=function(){oldFinish19();setTimeout(()=>{const c=selected||window.selected;if(c)cinematic(c)},170)};
+  // Animate balance values whenever the UI changes.
+  const balanceEl=q('#balance');if(balanceEl){let last=balanceEl.textContent;const mo=new MutationObserver(()=>{if(balanceEl.textContent!==last){balanceEl.classList.remove('fx19-number');void balanceEl.offsetWidth;balanceEl.classList.add('fx19-number');last=balanceEl.textContent}});mo.observe(balanceEl,{childList:true,characterData:true,subtree:true})}
+  // New collection entries get a NEW ribbon and pop.
+  const markNew=()=>document.querySelectorAll('#collectionGrid .car-card').forEach((c,i)=>{if(i<1&&!c.querySelector('.fx19-new')){const n=document.createElement('span');n.className='fx19-new';n.textContent='NEW';c.appendChild(n)}});
+  const oldRender19=renderAll;renderAll=function(){oldRender19();requestAnimationFrame(markNew)};
+  // Buttons: charged energy / pulse.
+  document.addEventListener('pointerdown',e=>{const b=e.target.closest('button');if(!b)return;b.classList.add('fx19-press');setTimeout(()=>b.classList.remove('fx19-press'),260);if(/престиж|jackpot|джекпот/i.test(b.textContent||'')){burst(35,'ray',{x:b.getBoundingClientRect().left+b.offsetWidth/2,y:b.getBoundingClientRect().top+b.offsetHeight/2})}});
+  // Garage slots feel like cars driving in.
+  const garageGrid=q('#garageGrid');if(garageGrid)new MutationObserver(()=>garageGrid.querySelectorAll('.car-card').forEach((c,i)=>{c.style.setProperty('--drive-delay',(i*55)+'ms')})).observe(garageGrid,{childList:true});
+  // Upgrade / achievement / reward celebration.
+  document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const t=(b.textContent||'').toLowerCase();if(/улучш|достиж|награ|престиж|jackpot|джекпот/.test(t)){const r=b.getBoundingClientRect();burst(35,'confetti',{x:r.left+r.width/2,y:r.top+r.height/2});flash()}});
 })();
