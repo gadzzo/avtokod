@@ -1,7 +1,7 @@
 <!doctype html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>АВТОКОД</title><script src="https://telegram.org/js/telegram-web-app.js"></script><link rel="stylesheet" href="style.css?v=12"></head><body><div class="app">
 <header><div><div class="brand">АВТО<span>КОД</span></div><div class="sub">коллекционируй автомобили</div></div><div class="money">₽ <b id="balance">2 500 000</b></div></header>
 <div class="stats"><div>🚘 <b id="cars">0</b><small>в гараже</small></div><div>⭐ <b id="level">1</b><small>уровень</small></div><div>🔥 <b id="streak">0</b><small>серия</small></div></div>
-<div class="tabs"><button class="active" data-tab="spin">Крутить</button><button data-tab="garage">Гараж</button><button data-tab="collection">Коллекция</button><button data-tab="market">Рынок</button><button data-tab="bonuses">Бонусы</button><button data-tab="activities">Активности</button></div>
+<div class="tabs"><button class="active" data-tab="spin">Крутить</button><button data-tab="garage">Гараж</button><button data-tab="collection">Коллекция</button><button data-tab="market">Рынок</button><button data-tab="bonuses">Бонусы</button><button data-tab="activities">Активности</button><button data-tab="profile">Профиль</button></div>
 <main id="spin" class="panel active-panel">
 <div class="roulette-wrap"><div class="pointer">▼</div><div class="roulette-viewport"><div id="rouletteTrack" class="roulette-track"></div></div></div>
 <div class="result-panel hidden-result" id="spinResult"><div class="result-main"><div><div class="result-label">ВЫПАЛО</div><b id="carName"></b><span id="price"></span></div><div class="result-rarity" id="rarity"></div></div><div class="result-actions"><button id="keep" class="green">🚘 В ГАРАЖ</button><button id="sell" class="dark">💰 ПРОДАТЬ</button></div></div>
@@ -44,4 +44,14 @@
 <div class="activity-card"><b>🔧 Тюнинг</b><select id="tuneCar"></select><button id="tuneBtn" class="bonus-btn">ТЮНИНГ — 1 000 000 ₽</button><div id="tuneResult"></div></div>
 <div class="activity-card"><b>📅 Сезон</b><div id="seasonBox"></div></div>
 </div></main>
-</div><script src="app-v12.js"></script></body></html>
+<main id="profile" class="panel">
+<div class="section-head"><b>👤 Профиль</b><span>Твой прогресс</span></div>
+<div class="profile-hero"><div class="profile-avatar">🚗</div><div><b id="profileTitle">Коллекционер</b><small id="profileSubtitle">Уровень 1 · начинающий</small></div></div>
+<div id="profileStats" class="stat-grid"></div>
+<div class="activity-card profile-card"><b>🏆 Таблица лидеров</b><p>Локальный рейтинг — для атмосферы. Настоящий общий рейтинг появится после подключения сервера.</p><div id="leaderboardBox"></div></div>
+<div class="activity-card profile-card"><b>🧩 Осколки</b><p>Дубликаты машин дают осколки. Их можно обменивать на деньги.</p><div id="shardsBox"></div></div>
+<div class="activity-card profile-card"><b>🔄 Обмен</b><div class="exchange-grid"><button data-exchange="ordinary">5 обычных → 500 000 ₽</button><button data-exchange="rare">10 редких → 2 000 000 ₽</button><button data-exchange="epic">20 эпических → 5 000 000 ₽</button><button data-exchange="legendary">30 легендарных → 15 000 000 ₽</button><button data-exchange="mythic">40 мифических → 40 000 000 ₽</button><button data-exchange="exclusive">50 эксклюзивных → 150 000 000 ₽</button></div></div>
+<div class="activity-card profile-card"><b>🔥 Событие и машина дня</b><div id="eventBox"></div></div>
+</main>
+
+</div><script src="app-v13.js"></script></body></html>
